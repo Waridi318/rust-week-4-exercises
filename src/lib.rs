@@ -136,20 +136,20 @@ pub struct OutPoint {
 pub fn parse_cli_args(args: &[String]) -> Result<CliCommand, BitcoinError> {
     // TODO: Match args to "send" or "balance" commands and parse required arguments
 
-    if args.len() < 2 { return Err(BitcoinError::ParseError("Missing Command".to_string()))};
-    let command = &args[1];
+    if args.len() < 1 { return Err(BitcoinError::ParseError("No arguments provided".to_string()))};
+    let command = &args[0];
     
     match command.as_str(){
         "send" => {
-            if args.len() < 4 {
+            if args.len() < 3 {
                 return Err(BitcoinError::ParseError("Missing arguments".to_string())) 
             }
-            let amount = match args[2].parse::<u64>(){
+            let amount = match args[1].parse::<u64>(){
                 Ok(amount) => amount,
                 Err(_) => return Err(BitcoinError::ParseError("Invalid amount".to_string())),
             };
 
-            let address = args[3].clone();
+            let address = args[2].clone();
 
             Ok(CliCommand::Send {amount, address})
         }
