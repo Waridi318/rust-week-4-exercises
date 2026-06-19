@@ -24,14 +24,14 @@ pub struct Point<T> {
 impl<T> Point<T> {
     pub fn new(x: T, y: T) -> Self {
         // TODO: Implement constructor for Point
-        Point{x, y}
+        Point { x, y }
     }
 }
 
 // Custom serialization for Bitcoin transaction
 pub trait BitcoinSerialize {
     fn serialize(&self) -> Vec<u8>;
-        // TODO: Implement serialization to bytes
+    // TODO: Implement serialization to bytes
 }
 
 // Legacy Bitcoin transaction
@@ -61,11 +61,11 @@ pub struct LegacyTransactionBuilder {
 impl Default for LegacyTransactionBuilder {
     fn default() -> Self {
         // TODO: Implement default values
-         Self {
+        Self {
             version: 1,
             inputs: Vec::new(),
-            outputs:Vec::new(),
-            lock_time:0,
+            outputs: Vec::new(),
+            lock_time: 0,
         }
     }
 }
@@ -75,7 +75,6 @@ impl LegacyTransactionBuilder {
         // TODO: Initialize new builder by calling default
         LegacyTransactionBuilder::default()
     }
-       
 
     pub fn version(mut self, version: i32) -> Self {
         // TODO: Set the transaction version
@@ -103,7 +102,7 @@ impl LegacyTransactionBuilder {
 
     pub fn build(self) -> LegacyTransaction {
         // TODO: Build and return the final LegacyTransaction
-        LegacyTransaction{
+        LegacyTransaction {
             version: self.version,
             inputs: self.inputs,
             outputs: self.outputs,
@@ -136,29 +135,30 @@ pub struct OutPoint {
 pub fn parse_cli_args(args: &[String]) -> Result<CliCommand, BitcoinError> {
     // TODO: Match args to "send" or "balance" commands and parse required arguments
 
-    if args.len() < 1 { return Err(BitcoinError::ParseError("No arguments provided".to_string()))};
+    if args.len() < 1 {
+        return Err(BitcoinError::ParseError(
+            "No arguments provided".to_string(),
+        ));
+    };
     let command = &args[0];
-    
-    match command.as_str(){
+
+    match command.as_str() {
         "send" => {
             if args.len() < 3 {
-                return Err(BitcoinError::ParseError("Missing arguments".to_string())) 
+                return Err(BitcoinError::ParseError("Missing arguments".to_string()));
             }
-            let amount = match args[1].parse::<u64>(){
+            let amount = match u64::from_str(&args[1]) {
                 Ok(amount) => amount,
                 Err(_) => return Err(BitcoinError::ParseError("Invalid amount".to_string())),
             };
 
             let address = args[2].clone();
 
-            Ok(CliCommand::Send {amount, address})
+            Ok(CliCommand::Send { amount, address })
         }
-        "balance" => {
-            Ok(CliCommand::Balance)
-        }
-        _ => Err(BitcoinError::ParseError("Unknown Command".to_string()))
+        "balance" => Ok(CliCommand::Balance),
+        _ => Err(BitcoinError::ParseError("Unknown Command".to_string())),
     }
-
 }
 
 pub enum CliCommand {
@@ -184,7 +184,7 @@ impl TryFrom<&[u8]> for LegacyTransaction {
         let inputs = Vec::with_capacity(input_count);
         let outputs = Vec::with_capacity(outputs_count);
 
-         Ok(LegacyTransaction {
+        Ok(LegacyTransaction {
             version,
             inputs,
             outputs,
