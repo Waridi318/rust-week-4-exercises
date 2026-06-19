@@ -173,6 +173,23 @@ impl TryFrom<&[u8]> for LegacyTransaction {
     fn try_from(data: &[u8]) -> Result<Self, Self::Error> {
         // TODO: Parse binary data into a LegacyTransaction
         // Minimum length is 10 bytes (4 version + 4 inputs count + 4 lock_time)
+        if data.len() < 10 {
+            return Err(BitcoinError::InvalidTransaction);
+        }
+        let version = i32::from_le_bytes(data[0..4].try_into().unwrap());
+        let input_count = u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize;
+        let outputs_count = u32::from_le_bytes(data[8..12].try_into().unwrap()) as usize;
+        let lock_time = u32::from_le_bytes(data[12..16].try_into().unwrap());
+
+        let inputs = Vec::with_capacity(input_count);
+        let outputs = Vec::with_capacity(outputs_count);
+
+         Ok(LegacyTransaction {
+            version,
+            inputs,
+            outputs,
+            lock_time,
+        })
     }
 }
 
