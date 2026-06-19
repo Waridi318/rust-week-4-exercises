@@ -135,7 +135,7 @@ pub struct OutPoint {
 pub fn parse_cli_args(args: &[String]) -> Result<CliCommand, BitcoinError> {
     // TODO: Match args to "send" or "balance" commands and parse required arguments
 
-    if args.len() < 1 {
+    if args.is_empty() {
         return Err(BitcoinError::ParseError(
             "No arguments provided".to_string(),
         ));
